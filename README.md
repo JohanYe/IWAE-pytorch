@@ -5,6 +5,8 @@ Link to paper: https://arxiv.org/abs/1509.00519
 
 <img height="300" alt="MNIST data" src="Figure/Figure_1.png">
 
+
+## Importance Weighted Autoencoders - Gaussian encoder, Bernoulli decoder 
 #### Analytical IWAE Loss Curve:
 ![MNIST sampled sampels](Figure/Figure_1.png)
 
