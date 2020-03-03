@@ -86,7 +86,7 @@ for epoch in range(num_epochs):
 
 ###### Loss Curve Plotting ######
 Plot_loss_curve(train_log, test_log)
-plt.savefig('./Figure/Figure_4.png', bbox_inches='tight')
+plt.savefig('./Figure/Figure_1.png', bbox_inches='tight')
 plt.close()
 
 ###### Sampling #########
@@ -110,6 +110,6 @@ samples = create_canvas(samples)
 axs[2].set_title('Sampled MNIST Digits')
 axs[2].axis('off')
 axs[2].imshow(samples, cmap='gray')
-plt.savefig('./Figure/Figure_5.png', bbox_inches='tight')
+plt.savefig('./Figure/Figure_2.png', bbox_inches='tight')
 plt.close()
 
