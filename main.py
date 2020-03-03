@@ -32,15 +32,6 @@ train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, sh
 test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False)
 
 
-# plotting
-X_plot, _ = next(iter(train_loader))
-canvas = create_canvas(X_plot)
-plt.axis('off')
-plt.imshow(canvas,cmap='gray')
-plt.savefig('./Figure/Figure_1.pdf')
-plt.close()
-
-
 for epoch in range(num_epochs):
     for idx, train_iter in enumerate(train_loader):
         batch, label = train_iter[0], train_iter[1]
@@ -95,7 +86,7 @@ for epoch in range(num_epochs):
 
 ###### Loss Curve Plotting ######
 Plot_loss_curve(train_log, test_log)
-plt.savefig('./Figure/Figure_2.png', bbox_inches='tight')
+plt.savefig('./Figure/Figure_4.png', bbox_inches='tight')
 plt.close()
 
 ###### Sampling #########
@@ -119,6 +110,6 @@ samples = create_canvas(samples)
 axs[2].set_title('Sampled MNIST Digits')
 axs[2].axis('off')
 axs[2].imshow(samples, cmap='gray')
-plt.savefig('./Figure/Figure_3.png', bbox_inches='tight')
+plt.savefig('./Figure/Figure_5.png', bbox_inches='tight')
 plt.close()
 
