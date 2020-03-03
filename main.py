@@ -11,9 +11,10 @@ sns.set_style("darkgrid")
 
 
 # Hyperparameters
+gif_pics = True
 batch_size = 250
-lr = 0.0001
-num_epochs = 2
+lr = 1e-4
+num_epochs = 60
 train_log = []
 test_log = {}
 k = 0
@@ -52,6 +53,8 @@ for epoch in range(num_epochs):
         optimizer.step()
 
         train_log.append(batch_loss.item())
+        if beta < 2:
+            beta += 0.001 # Warm-up
         k += 1
 
     loss_batch_mean = []
@@ -64,6 +67,27 @@ for epoch in range(num_epochs):
         loss_batch_mean.append(test_loss.detach().item())
     test_log[k] = np.mean(loss_batch_mean)
 
+    if gif_pics and epoch % 2 == 0:
+        batch = batch[0,:100,:].squeeze()
+        recon_x = net(batch).detach().cpu()
+        samples = net.sample(100).detach().cpu()
+        fig, axs = plt.subplots(1,2,figsize=(5,10))
+
+        #Reconstructions
+        recon_x = create_canvas(recon_x)
+        axs[0].set_title('Epoch {} Reconstructions'.format(epoch+1))
+        axs[0].axis('off')
+        axs[0].imshow(recon_x, cmap='gray')
+
+        #Samples
+        samples = net.sample(100).detach().cpu()
+        samples = create_canvas(samples)
+        axs[1].set_title('Epoch {} Sampled Samples'.format(epoch+1))
+        axs[1].axis('off')
+        axs[1].imshow(samples, cmap='gray')
+        save_path = './Figure/GIF/gif_pic' + str(epoch+1) + '.jpg'
+        plt.savefig(save_path, bbox_inches='tight')
+        plt.close()
 
 
     print('[Epoch: {}/{}][Step: {}]\tTrain Loss: {},\tTest Loss: {}'.format(
@@ -71,7 +95,7 @@ for epoch in range(num_epochs):
 
 ###### Loss Curve Plotting ######
 Plot_loss_curve(train_log, test_log)
-plt.savefig('./Figure/Figure2.pdf', bbox_inches='tight')
+plt.savefig('./Figure/Figure_2.pdf', bbox_inches='tight')
 plt.close()
 
 ###### Sampling #########
@@ -95,6 +119,6 @@ samples = create_canvas(samples)
 axs[2].set_title('Sampled MNIST Digits')
 axs[2].axis('off')
 axs[2].imshow(samples, cmap='gray')
-plt.savefig('./Figure/Figure3.pdf', bbox_inches='tight')
+plt.savefig('./Figure/Figure_3.pdf', bbox_inches='tight')
 plt.close()
 

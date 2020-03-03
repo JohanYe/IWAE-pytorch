@@ -80,7 +80,7 @@ class AnalyticalIWAE(nn.Module):
         weight = weight / torch.sum(weight, 0)
 
         # scaling
-        loss = torch.mean(-torch.sum(weight * (log_Pxh - log_QhGx), 0))
+        loss = torch.mean(-torch.sum(weight * (log_PxGh + (log_Ph - log_QhGx)*beta), 0))
         return loss
 
     def sample(self, n_samples):
