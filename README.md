@@ -3,5 +3,4 @@ I had difficulty finding a simple IWAE implementation in pytorch, so i decided t
 
 Link to paper: https://arxiv.org/abs/1509.00519
 
-![60 epoch results, k = 5](Figure/Figure_1.pdf)
-
+<img height="300" alt="MNIST data" src="Figure/Figure_1.png">
