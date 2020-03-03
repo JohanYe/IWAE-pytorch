@@ -3,4 +3,7 @@ I had difficulty finding a simple IWAE implementation in pytorch, so i decided t
 
 Link to paper: https://arxiv.org/abs/1509.00519
 
-<img height="300" alt="MNIST data" src="Figure/Figure_1.pdf">
+<img height="300" alt="MNIST data" src="Figure/Figure_1.png">
+
+
+![MNIST samples](Figure/Figure_1.png)
