@@ -10,4 +10,6 @@ Link to paper: https://arxiv.org/abs/1509.00519
 #### Analytical IWAE 60 epoch results:
 ![MNIST sampled sampels](Figure/Figure_2.png)
 
+#### Training gif
+![Giffygifgif](Figure/3raxbh.gif)
 
