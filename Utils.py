@@ -1,5 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import torch.nn as nn
+
+
 
 def Plot_loss_curve(train_list, test_dict):
     x_tst = list(test_dict.keys())
@@ -7,7 +10,7 @@ def Plot_loss_curve(train_list, test_dict):
     train_x_vals = np.arange(len(train_list))
     plt.figure(2)
     plt.xlabel('Num Steps')
-    plt.ylabel('Negative Log Likelihood')
+    plt.ylabel('ELBO')
     plt.title('ELBO Loss Curve')
     plt.plot(train_x_vals, train_list, label='train')
     plt.plot(x_tst, y_tst, label='tst')

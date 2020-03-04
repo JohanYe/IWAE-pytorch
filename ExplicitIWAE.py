@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+
 # define network
 class AnalyticalIWAE(nn.Module):
 
@@ -9,11 +10,9 @@ class AnalyticalIWAE(nn.Module):
         super(AnalyticalIWAE, self).__init__()
         self.fc1 = nn.Sequential(
             nn.Linear(in_features=784, out_features=num_hidden1),
-            # IWAE_BatchNorm1d(),
             nn.ReLU(),
             nn.Linear(num_hidden1, num_hidden2),
             nn.ReLU(),
-            # nn.BatchNorm1d(num_hidden2), #This comma is ok!? makes it easier to add and remove modules
         )
 
         self.fc21 = nn.Linear(in_features=num_hidden2, out_features=latent_space)
@@ -22,10 +21,8 @@ class AnalyticalIWAE(nn.Module):
         self.fc3 = nn.Sequential(
             nn.Linear(in_features=latent_space, out_features=num_hidden2),
             nn.ReLU(),
-            # nn.BatchNorm1d(num_hidden2),
             nn.Linear(num_hidden2, num_hidden1),
             nn.ReLU(),
-            # nn.BatchNorm1d(num_hidden1),
         )
         self.decode = nn.Linear(in_features=num_hidden1, out_features=784)
         self.latent = latent_space
