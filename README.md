@@ -3,6 +3,16 @@ I had difficulty finding a simple IWAE implementation in pytorch, so i decided t
 
 Link to paper: https://arxiv.org/abs/1509.00519
 
+# Importance Weighted Autoencoders - Gaussian encoder and decoder
+#### Pytorch IWAE Loss Curve:
+![MNIST](Figure/Figure_3.png)
+
+#### Pytorch IWAE 60 epoch results:
+![MNIST sampled sampels](Figure/Figure_4.png)
+
+#### Training gif
+![Giffygifgif1](Figure/3risln.gif)
+
 ## Importance Weighted Autoencoders - Gaussian encoder, Bernoulli decoder 
 #### Analytical IWAE Loss Curve:
 ![MNIST sampled sampels](Figure/Figure_1.png)
@@ -11,5 +21,5 @@ Link to paper: https://arxiv.org/abs/1509.00519
 ![MNIST sampled sampels](Figure/Figure_2.png)
 
 #### Training gif
-![Giffygifgif](Figure/3raxbh.gif)
+![Giffygifgif2](Figure/3raxbh.gif)
 
