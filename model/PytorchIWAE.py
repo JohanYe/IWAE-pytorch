@@ -56,10 +56,10 @@ class PytorchIWAE(nn.Module):
         z_Gx = qz_Gx_obs.rsample()
         return z_Gx, qz_Gx_obs
 
-    def forward(self, x, train=False):
+    def forward(self, x, train=True):
         mu, log_var = self.encoder(x)
         if train:
-            std = torch.exp(0.5 * log_var)
+            std = log_var.mul(0.5).exp_()
             z, _ = self.reparameterize(mu, std)
         else:
             z = mu
@@ -97,7 +97,7 @@ class PytorchIWAE(nn.Module):
         loss = -torch.mean(torch.logsumexp(w, 0))
         
 
-        return loss#, -torch.mean(torch.logsumexp(logpz - logqz_Gx, 0)) uncomment to analyse KL
+        return loss
 
     def sample(self, num_samples):
         z_dist = td.Normal(loc=torch.zeros([num_samples, self.latent]), scale=1)

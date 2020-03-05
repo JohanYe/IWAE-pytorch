@@ -14,20 +14,13 @@ class UnFlatten(nn.Module):
         return input.view(input.size(0), 50, 7, 7)
 
 
-'''
-Encoder types: "StudentT", "Gaussian"
-Decoder types: "StudentT", "Gaussian", "Bernoulli"
-'''
-
 class ConvIWAE(nn.Module):
-    def __init__(self, z_dim=20, bs, encoder='Gaussian', decoder='Gaussian'):
+    def __init__(self, z_dim=20, bs):
         super(ConvIWAE, self).__init__()
         self.z_dim = z_dim
         self.analytic_kl = True
         self.batch_size = bs
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.encoder_type = encoder
-        self.decoder_type = decoder
 
         self.block1 = nn.Sequential(
             nn.Conv2d(1, 240, kernel_size=3, stride=1, padding=1), nn.LeakyReLU(0.2),
@@ -90,14 +83,9 @@ class ConvIWAE(nn.Module):
             lpz = p_z.log_prob(z).sum(-1)
             lqzx = qz_Gx_obs.log_prob(z).sum(-1)
             kl = lqzx - lpz
-        if self.decoder_type == "gaussian":
-            xgz = td.Normal(loc=mu_dec, scale=std_dec)  # x_dist
-            lpxgz = xgz.log_prob(x).sum([-1, -2, -3])  # (K,bs)
-        elif self.decoder_type == "bernoulli":
-            xgz = -F.binary_cross_entropy(mu_dec, x.expand(K, x.size(0), x.size(1), x.size(2), x.size(3)),
-                                          reduction="none")
-            lpxgz = xgz.sum([-1, -2, -3])
 
+        xgz = td.Normal(loc=mu_dec, scale=std_dec)  # x_dist
+        lpxgz = xgz.log_prob(x).sum([-1, -2, -3])  # (K,bs)
         elbo = lpxgz - beta * kl
 
         loss = -torch.mean(torch.logsumexp(elbo, 0))

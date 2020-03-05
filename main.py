@@ -1,11 +1,8 @@
-import torch
-import matplotlib.pyplot as plt
 import torchvision
-import numpy as np
 import torch.optim as optim
 import seaborn as sns
-from ExplicitIWAE import *
-from PytorchIWAE import *
+from model.ExplicitIWAE import *
+from model.PytorchIWAE import *
 from Utils import *
 
 sns.set_style("darkgrid")
@@ -14,7 +11,7 @@ sns.set_style("darkgrid")
 gif_pics = True
 batch_size = 250
 lr = 1e-4
-num_epochs = 10
+num_epochs = 60
 train_log = []
 test_log = {}
 k = 0
@@ -23,8 +20,8 @@ beta = 0
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Model
-Explicit = False
-Implicit = True
+Explicit = True
+Implicit = False
 
 if (Explicit + Implicit) > 1:
     print('More than one model enabled')
@@ -55,7 +52,7 @@ for epoch in range(num_epochs):
         optimizer.step()
 
         train_log.append(batch_loss.item())
-        if beta < 2:
+        if beta < 1:
             beta += 0.001  # Warm-up
         k += 1
 
@@ -101,7 +98,7 @@ for epoch in range(num_epochs):
 
 ###### Loss Curve Plotting ######
 Plot_loss_curve(train_log, test_log)
-plt.savefig('./Figure/Figure_3.png', bbox_inches='tight')
+plt.savefig('./Figure/Figure_1.png', bbox_inches='tight')
 plt.close()
 
 ###### Sampling #########
@@ -128,5 +125,5 @@ samples = create_canvas(samples)
 axs[2].set_title('Sampled MNIST Digits')
 axs[2].axis('off')
 axs[2].imshow(samples, cmap='gray')
-plt.savefig('./Figure/Figure_4.png', bbox_inches='tight')
+plt.savefig('./Figure/Figure_2.png', bbox_inches='tight')
 plt.close()
