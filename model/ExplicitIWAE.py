@@ -30,7 +30,7 @@ class AnalyticalIWAE(nn.Module):
 
         for m in self.modules():
             if isinstance(m, nn.Linear):
-                nn.init.xavier_normal_(m.weight)
+                nn.init.kaiming_normal_(m.weight)
 
     def encode(self, x):
         x = self.fc1(x)
@@ -78,6 +78,7 @@ class AnalyticalIWAE(nn.Module):
 
         # scaling
         loss = torch.mean(-torch.sum(weight * (log_PxGh + (log_Ph - log_QhGx)*beta), 0))
+
         return loss
 
     def sample(self, n_samples):

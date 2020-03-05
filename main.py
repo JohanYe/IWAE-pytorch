@@ -52,7 +52,7 @@ for epoch in range(num_epochs):
         optimizer.step()
 
         train_log.append(batch_loss.item())
-        if beta < 1:
+        if beta < 2:
             beta += 0.001  # Warm-up
         k += 1
 
