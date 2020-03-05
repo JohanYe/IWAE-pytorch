@@ -3,6 +3,8 @@ import torch
 import torch.nn.functional as F
 import torch.distributions as td
 
+# NOT INTEGRATED WITH MAIN.PY, ONLY FOR SHOW
+
 
 class Flatten(nn.Module):
     def forward(self, input):

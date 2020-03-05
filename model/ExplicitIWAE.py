@@ -3,9 +3,8 @@ import torch.nn as nn
 import numpy as np
 
 
-# define network
 class AnalyticalIWAE(nn.Module):
-
+    # Calculates loss explicitly. 
     def __init__(self, num_hidden1, num_hidden2, latent_space):
         super(AnalyticalIWAE, self).__init__()
         self.fc1 = nn.Sequential(

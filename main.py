@@ -11,7 +11,7 @@ sns.set_style("darkgrid")
 gif_pics = True
 batch_size = 250
 lr = 1e-4
-num_epochs = 60
+num_epochs = 65
 train_log = []
 test_log = {}
 k = 0

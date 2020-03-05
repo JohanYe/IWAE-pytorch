@@ -6,6 +6,8 @@ import torch.nn.functional as F
 
 # define network
 class PytorchIWAE(nn.Module):
+    # Network uses in-built pytorch function for variational inference, instead of having to explicitly
+    # calculate it
     def __init__(self, num_hidden1, num_hidden2, latent, in_dim=784):
         super(PytorchIWAE, self).__init__()
         self.latent = latent
