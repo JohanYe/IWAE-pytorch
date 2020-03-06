@@ -1,7 +1,10 @@
 # Importance Weighted Autoencoders (IWAE)
-I had difficulty finding a simple IWAE implementation in pytorch, so i decided to create and share my own. There is both a model with explicit notation and one using pytorch's in-built functions. 
-
 Link to paper: https://arxiv.org/abs/1509.00519
+
+<b>AnalyticalIWAE:<\b> IWAE calculating loss manually
+<b>PytorchIWAE:<\b> IWAE using built-in torch functions to evaluate and calculation loss
+<b>ConvIWAE:<\b> An example of convolutional IWAE, not integrated with main script, only as example
+
 
 # Importance Weighted Autoencoders - Gaussian encoder and decoder
 #### Pytorch IWAE Loss Curve:
