@@ -97,9 +97,43 @@ class PytorchIWAE(nn.Module):
 
         w = log_PxGh + (log_Ph - log_QhGx)*beta
         loss = -torch.mean(torch.logsumexp(w, 0))
-        
-
         return loss
+
+    def calc_loss_simple(self, x, beta, k_samples):
+        """
+        Simple to understand and lazy algorithm, but slow
+        Not made compatible with remainin script
+        Useful as it is likely easy to implement into existing models
+        """
+        from torch.distributions.kl import kl_divergence as KL
+
+        for _ in range(k_samples):
+            # Encode
+            mu_enc, log_var_enc = self.encoder(x)
+            std_enc = torch.exp(0.5 * log_var_enc)
+
+            # Reparameterize:
+            z_Gx, qz_Gx_obs = self.reparameterize(mu_enc, std_enc)
+            mu_prior = torch.zeros(self.latent).to(self.device)
+            std_prior = torch.ones(self.latent).to(self.device)
+            p_z = td.Normal(loc=mu_prior, scale=std_prior)
+
+            #decode
+            mu_dec, log_var_dec = self.decoder(z_Gx)
+            std_dec = log_var_dec.mul(0.5).exp_()
+            px_Gz = td.Normal(loc=mu_dec, scale=std_dec).log_prob(x)
+
+            if log_px_z is None:
+                log_px_z = px_Gz.log_prob(x).mean(-1).unsqueeze(1)
+                kld = KL(qz_Gx_obs, p_z).unsqueeze(1)
+            else:
+                log_px_z = torch.cat([log_px_z, px_Gz.log_prob(x).mean(-1).unsqueeze(1)], 1)
+                kld = torch.cat([kld, KL(qz_Gx_obs, p_z).unsqueeze(1)], 1)
+
+        # loss calculation
+        log_wk = log_px_z - kld
+        L_k = log_wk.logsumexp(dim=-1) - k_samples.log()  # division by k in logspace
+        return -torch.mean(L_k)
 
     def sample(self, num_samples):
         z_dist = td.Normal(loc=torch.zeros([num_samples, self.latent]), scale=1)
