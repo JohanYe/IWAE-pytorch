@@ -3,7 +3,7 @@ Link to paper: https://arxiv.org/abs/1509.00519
 
 <b>AnalyticalIWAE:</b> IWAE calculating loss manually
 
-<b>PytorchIWAE:</b> IWAE using built-in torch functions to evaluate and calculation loss
+<b>PytorchIWAE:</b> IWAE using built-in torch functions to evaluate and calculation loss. Includes example of algorithm very easy to apply to existing VAE (although a bit slower)
 
 <b>ConvIWAE:</b> An example of convolutional IWAE, not integrated with main script, only as example
 
