@@ -16,18 +16,22 @@ class PytorchIWAE(nn.Module):
 
         self.block1 = nn.Sequential(
             nn.Linear(in_features=in_dim, out_features=num_hidden1),
-            nn.ReLU(),
+            nn.SiLU(),
             nn.Linear(num_hidden1, num_hidden2),
-            nn.ReLU(),
+            nn.SiLU(),
+            nn.Linear(num_hidden2, num_hidden2 // 2),
+            nn.SiLU(),
         )
-        self.mu_enc = nn.Linear(in_features=num_hidden2, out_features=self.latent)
-        self.lvar_enc = nn.Linear(in_features=num_hidden2, out_features=self.latent)
+        self.mu_enc = nn.Linear(in_features=num_hidden2 // 2, out_features=self.latent)
+        self.lvar_enc = nn.Linear(in_features=num_hidden2 // 2, out_features=self.latent)
 
         self.block2 = nn.Sequential(
-            nn.Linear(in_features=self.latent, out_features=num_hidden2),
-            nn.ReLU(),
+            nn.Linear(in_features=self.latent, out_features=num_hidden2 // 2),
+            nn.SiLU(),
+            nn.Linear(num_hidden2 // 2, num_hidden2),
+            nn.SiLU(),
             nn.Linear(num_hidden2, num_hidden1),
-            nn.ReLU(),
+            nn.SiLU(),
         )
 
         self.mu_dec = nn.Linear(in_features=num_hidden1, out_features=self.out_dec)

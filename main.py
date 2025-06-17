@@ -31,7 +31,7 @@ if (Explicit + Implicit) > 1:
 if Explicit:
     net = AnalyticalIWAE(1024, 512, 32).to(device)
 if Implicit:
-    net = PytorchIWAE(1024, 512, 32).to(device)
+    net = PytorchIWAE(1024, 512, 10).to(device)
 optimizer = optim.Adam(net.parameters(), lr=lr)
 
 # Data loading
@@ -50,34 +50,9 @@ test_loader = torch.utils.data.DataLoader(
 )
 
 
-# Data loading with skewed distribution
-def skew_dataset(dataset, skew_digits, remove_ratio):
-    """
-    Skew the dataset by removing a percentage of specified digits.
-    Args:
-        dataset: The dataset to skew (e.g., MNIST).
-        skew_digits: List of digits to skew (e.g., [1, 2, 3, 4, 5]).
-        remove_ratio: Fraction of samples to remove for each digit (e.g., 0.8 for 80%).
-    Returns:
-        Skewed dataset.
-    """
-    targets = dataset.targets.numpy()
-    data = dataset.data.numpy()
-
-    mask = np.ones(len(targets), dtype=bool)
-    for digit in skew_digits:
-        digit_indices = np.where(targets == digit)[0]
-        remove_count = int(len(digit_indices) * remove_ratio)
-        remove_indices = np.random.choice(digit_indices, remove_count, replace=False)
-        mask[remove_indices] = False
-
-    dataset.targets = torch.tensor(targets[mask])
-    dataset.data = torch.tensor(data[mask])
-    return dataset
-
-
 # Skew the training dataset
-skew_digits = [1, 2, 3, 4, 5]  # Digits to skew
+train_data = filter_dataset(train_data, list(range(5)))  # Keep all digits
+skew_digits = [0, 1, 2]  # Digits to skew
 remove_ratio = 0.8  # Remove 80% of these digits
 train_data = skew_dataset(train_data, skew_digits, remove_ratio)
 

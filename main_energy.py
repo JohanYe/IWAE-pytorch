@@ -6,6 +6,7 @@ from model.ExplicitIWAE import *
 from model.PytorchIWAE import *
 from Utils import *
 import sys
+from ebm_model import SmallEBM
 
 sns.set_style("darkgrid")
 
@@ -32,7 +33,7 @@ if (Explicit + Implicit) > 1:
 if Explicit:
     net = AnalyticalIWAE(1024, 512, 32).to(device)
 if Implicit:
-    net = PytorchIWAE(1024, 512, 32).to(device)
+    net = PytorchIWAE(1024, 512, 10).to(device)
     # Load from checkpoint if available
 
 model_save_path = "./saved_models/iwae_model.pth"
@@ -51,6 +52,7 @@ t = torchvision.transforms.transforms.ToTensor()
 train_data = torchvision.datasets.MNIST(
     "./", train=True, transform=t, target_transform=None, download=True
 )
+train_data = filter_dataset(train_data, list(range(5)))  # Keep all digits
 test_data = torchvision.datasets.MNIST(
     "./", train=False, transform=t, target_transform=None, download=True
 )
@@ -60,26 +62,6 @@ train_loader = torch.utils.data.DataLoader(
 test_loader = torch.utils.data.DataLoader(
     test_data, batch_size=batch_size, shuffle=False
 )
-
-
-
-###### Energy-Based Model Implementation ######
-class SmallEBM(nn.Module):
-    def __init__(self, input_dim=784, hidden_dim=256):
-        super(SmallEBM, self).__init__()
-        self.net = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, hidden_dim // 2),
-            nn.ReLU(),
-            nn.Linear(hidden_dim // 2, 1),
-        )
-
-    def forward(self, x):
-        return self.net(x).squeeze()
-
-    def energy(self, x):
-        return self.forward(x)
 
 
 # Initialize EBM
@@ -101,7 +83,7 @@ for epoch in range(ebm_epochs):
         neg_energy = ebm.energy(neg_samples)
 
         # Contrastive loss
-        loss = pos_energy.mean() - neg_energy.mean() 
+        loss = pos_energy.mean() - neg_energy.mean()
 
         # Regularize the norm of the energy :
         reg_loss = torch.mean(pos_energy**2) + torch.mean(neg_energy**2)
@@ -112,13 +94,10 @@ for epoch in range(ebm_epochs):
         x_interp.requires_grad_(True)
         energy_interp = torch.mean(ebm(x_interp))
         grad_interp = torch.autograd.grad(
-            outputs=energy_interp,
-            inputs=x_interp,
-            create_graph=True,
-            retain_graph=True
+            outputs=energy_interp, inputs=x_interp, create_graph=True, retain_graph=True
         )[0]
 
-        grad_reg_loss = grad_interp.norm(2, dim=1) 
+        grad_reg_loss = grad_interp.norm(2, dim=1)
 
         # Add to loss
         loss += 0.5 * reg_loss + 0.5 * grad_reg_loss.mean()
@@ -126,20 +105,26 @@ for epoch in range(ebm_epochs):
         ebm_optimizer.zero_grad()
         loss.backward()
         ebm_optimizer.step()
-        
+
         if epoch == 0 and idx == 0:
             print(f"neg_samples shape: {neg_samples.shape}")
-            print(f"neg_samples min: {neg_samples.min().item():.4f}, max: {neg_samples.max().item():.4f}")
-            
+            print(
+                f"neg_samples min: {neg_samples.min().item():.4f}, max: {neg_samples.max().item():.4f}"
+            )
+
             # Save samples as a plot
             neg_canvas = create_canvas(neg_samples.cpu())
             plt.figure(figsize=(10, 5))
             plt.imshow(neg_canvas, cmap="gray")
             plt.title(f"IWAE Generated Samples - Epoch {epoch}, Batch {idx}")
             plt.axis("off")
-            plt.savefig(f"./iwae_samples_epoch_{epoch}_batch_{idx}.png", bbox_inches="tight")
+            plt.savefig(
+                f"./iwae_samples_epoch_{epoch}_batch_{idx}.png", bbox_inches="tight"
+            )
             plt.close()
-            print(f"Saved IWAE samples plot to ./iwae_samples_epoch_{epoch}_batch_{idx}.png")
+            print(
+                f"Saved IWAE samples plot to ./iwae_samples_epoch_{epoch}_batch_{idx}.png"
+            )
 
     print(
         f"EBM Epoch {epoch+1}/{ebm_epochs}, Loss: {loss.item():.4f}, pos_energy: {pos_energy.mean().item():.4f}, neg_energy: {neg_energy.mean().item():.4f}"
